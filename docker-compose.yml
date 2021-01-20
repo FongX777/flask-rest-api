@@ -1,7 +1,6 @@
-version: "3.7"
+version: '3.7'
 
 services:
-
   flask:
     build: ./flask
     container_name: flask
@@ -16,4 +15,4 @@ services:
     container_name: nginx
     restart: always
     ports:
-      - "80:80"
+      - '80:80'
