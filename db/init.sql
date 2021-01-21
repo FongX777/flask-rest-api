@@ -1,5 +1,5 @@
-CREATE DATABASE flask_web;
-use flask_web;
+CREATE DATABASE web;
+use web;
 
 CREATE TABLE tasks (
   id SERIAL PRIMARY KEY,
