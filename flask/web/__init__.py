@@ -1,6 +1,5 @@
 import os
 from flask import Flask, request
-import mysql.connector
 from web.use_case.ListTasksUseCase import ListTasksUseCase
 from web.use_case.CreateTaskUseCase import CreateTaskUseCase
 from web.use_case.UpdateTaskUseCase import UpdateTaskUseCase
@@ -11,22 +10,6 @@ app = Flask(__name__)
 
 
 taskDAO = TaskDAO()
-
-
-def get_conn():
-    config = {
-        'user': 'root',
-        'password': 'root',
-        'host': 'db',
-        'port': '3306',
-        'database': 'flask_web'
-    }
-    connection = mysql.connector.connect(**config)
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM favorite_colors')
-    return cursor
-    # cursor.close()
-    # connection.close()
 
 
 @app.route('/')
