@@ -5,4 +5,4 @@ class DeleteTaskUseCase:
         self.__taskDAO = taskDAO
 
     def execute(self, id):
-        self.__taskDAO.deleteTask(id)
+        self.__taskDAO.delete_task(id)

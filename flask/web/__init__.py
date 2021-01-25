@@ -1,12 +1,11 @@
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import mysql.connector
 from mysql.connector import Error
-from web.use_case.ListTasksUseCase import ListTasksUseCase
-from web.use_case.CreateTaskUseCase import CreateTaskUseCase
-from web.use_case.UpdateTaskUseCase import UpdateTaskUseCase
-from web.use_case.DeleteTaskUseCase import DeleteTaskUseCase
-from web.dao.TaskDAO import MySQLTaskDAO
+from web.use_case.list_tasks import ListTasksUseCase
+from web.use_case.use_cases import create_task, update_task
+from web.use_case.delete_task import DeleteTaskUseCase
+from web.dao.task import MySQLTaskDAO
 
 app = Flask(__name__)
 
@@ -18,7 +17,6 @@ def get_cursor():
         'host': os.getenv('DB_HOST'),
         'port': os.getenv('DB_PORT'),
         'database': os.getenv('DB_DATABASE'),
-        'database': 'web'
     }
     try:
         return mysql.connector.connect(**config).cursor()
@@ -43,27 +41,42 @@ def get_conn():
 
 
 @app.route('/tasks')
-def list_all_tasks():
+def route_list_all_tasks():
     taskDAO = MySQLTaskDAO(get_conn())
     use_case = ListTasksUseCase(taskDAO)
     return use_case.execute()
 
 
-@app.route('/task', methods=['POST', 'PUT'])
-def post_task():
-    taskDAO = MySQLTaskDAO(get_conn())
-    if request.method == 'POST':
-        use_case = CreateTaskUseCase(taskDAO)
-        return use_case.execute(request.json['name'])
+@app.route('/task', methods=['POST'])
+def route_post_task():
+    if 'name' not in request.json or not isinstance(request.json['name'], str):
+        return jsonify({'message': 'Invalid name'}), 400
 
-    else:
-        use_case = UpdateTaskUseCase(taskDAO)
-        return use_case.execute(request.json['id'], request.json['name'], request.json['status'])
+    taskDAO = MySQLTaskDAO(get_conn())
+    result = create_task(taskDAO, request.json['name'])
+    return jsonify(result), 201
+
+
+@app.route('/task/<id>', methods=['PUT'])
+def route_put_task_by_id(id):
+    if 'name' not in request.json or not isinstance(request.json['name'], str):
+        return jsonify({'message': 'Invalid name'}), 400
+
+    if 'status' not in request.json or not isinstance(request.json['status'], int):
+        return jsonify({'message': 'Invalid status'}), 400
+
+    taskDAO = MySQLTaskDAO(get_conn())
+    id = int(id)
+    result = update_task(
+        taskDAO, id=id, name=request.json['name'], status=request.json['status'])
+    if result is None:
+        return jsonify({'message': 'Task not exists'}), 404
+    return jsonify(result), 200
 
 
 @app.route('/task/<id>', methods=['DELETE'])
-def delete_task(id):
+def route_delete_task(id):
     taskDAO = MySQLTaskDAO(get_conn())
     use_case = DeleteTaskUseCase(taskDAO)
     use_case.execute(int(id))
-    return ''
+    return '', 200

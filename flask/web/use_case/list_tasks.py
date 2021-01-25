@@ -5,5 +5,5 @@ class ListTasksUseCase:
         self.__taskDAO = taskDAO
 
     def execute(self):
-        result = self.__taskDAO.getTasks()
+        result = self.__taskDAO.get_tasks()
         return {"result": result}

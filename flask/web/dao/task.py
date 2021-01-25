@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
+from web.domain.task import Task, TaskStatus
 
 
 class AbstractTaskDAO:
@@ -9,35 +10,46 @@ class AbstractTaskDAO:
     def __init__(self):
         self.__db = {}
 
-    def getTasks(self):
+    def get(self, id) -> Task:
+        return self.__db[id]
+
+    def get_tasks(self):
         return list(self.__db.values())
 
-    def insertTask(self, name):
+    def add_task(self, name):
         id = (self.__counter)
         self.__db[id] = {"id": id, "name": name, "status": 0}
         self.__counter += 1
         return self.__db[id]
 
-    def updateTask(self, id, name, status):
+    def update_task(self, id, name, status: TaskStatus):
         self.__db[(id)]["name"] = name
         self.__db[(id)]["status"] = status
         return self.__db[id]
 
-    def deleteTask(self, id):
+    def delete_task(self, id):
         if ((id) in self.__db):
             self.__db.pop((id))
 
 
-class MySQLTaskDAO:
-    __db = None
+class MySQLTaskDAO(AbstractTaskDAO):
     __conn = None
-    __counter = 1
 
     def __init__(self, conn):
-        self.__db = {}
         self.__conn = conn
 
-    def getTasks(self):
+    def get(self, id: int):
+        cursor = self.__conn.cursor()
+        cursor.execute(
+            "SELECT id, name, status FROM tasks WHERE id = %s", (id,))
+        data = cursor.fetchone()
+        if data is None:
+            return None
+        task = Task(id=data[0], name=data[1], status=TaskStatus(data[2]))
+        cursor.close()
+        return task
+
+    def get_tasks(self):
         cursor = self.__conn.cursor()
         cursor.execute("SELECT id, name, status FROM tasks;")
         tasks = []
@@ -46,33 +58,25 @@ class MySQLTaskDAO:
         cursor.close()
         return tasks
 
-    def insertTask(self, name, status):
+    def add_task(self, name, status: TaskStatus):
         cursor = self.__conn.cursor()
         sql = "INSERT INTO tasks (name, status) VALUES (%s, %s)"
-        cursor.execute(sql, (name, status))
+        cursor.execute(sql, (name, status.value))
         self.__conn.commit()
         id = cursor.lastrowid
-        cursor.execute(
-            "SELECT id, name, status FROM tasks WHERE id = %s", (id,))
-        data = cursor.fetchone()
-        task = {"id": data[0], "name": data[1], "status": data[2]}
         cursor.close()
-        return task
+        return self.get(id)
 
-    def updateTask(self, id, name, status):
-        print('~~~~~~`', id, name, status)
+    def update_task(self, task: Task):
         cursor = self.__conn.cursor()
         sql = "UPDATE tasks SET name = %s, status = %s WHERE id = %s;"
-        cursor.execute(sql, (name, status, id))
+        print('~~~', (task.name, task.status.value, task.id))
+        cursor.execute(sql, (task.name, task.status.value, task.id))
         self.__conn.commit()
-        cursor.execute(
-            "SELECT id, name, status FROM tasks WHERE id = %s", (id,))
-        data = cursor.fetchone()
-        task = {"id": data[0], "name": data[1], "status": data[2]}
         cursor.close()
-        return task
+        return self.get(id)
 
-    def deleteTask(self, id):
+    def delete_task(self, id):
         cursor = self.__conn.cursor()
         sql = "DELETE FROM tasks WHERE id = %s;"
         cursor.execute(sql, (id,))
