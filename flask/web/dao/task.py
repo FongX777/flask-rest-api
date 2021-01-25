@@ -67,11 +67,10 @@ class MySQLTaskDAO(AbstractTaskDAO):
         cursor.close()
         return self.get(id)
 
-    def update_task(self, task: Task):
+    def update_task(self, id, name, status):
         cursor = self.__conn.cursor()
         sql = "UPDATE tasks SET name = %s, status = %s WHERE id = %s;"
-        print('~~~', (task.name, task.status.value, task.id))
-        cursor.execute(sql, (task.name, task.status.value, task.id))
+        cursor.execute(sql, (name, status, id))
         self.__conn.commit()
         cursor.close()
         return self.get(id)

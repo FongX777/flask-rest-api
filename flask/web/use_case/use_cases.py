@@ -15,5 +15,5 @@ def update_task(taskDAO, id: int, name: str, status: int):
     if task is None:
         return None
     task.update(name, TaskStatus(status))
-    updated_task = taskDAO.update_task(task)
+    updated_task = taskDAO.update_task(task.id, task.name, task.status.value)
     return to_task_dto(updated_task)
