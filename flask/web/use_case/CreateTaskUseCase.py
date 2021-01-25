@@ -5,5 +5,5 @@ class CreateTaskUseCase:
         self.__taskDAO = taskDAO
 
     def execute(self, name):
-        result = self.__taskDAO.insertTask(name)
+        result = self.__taskDAO.insertTask(name, 0)
         return result
