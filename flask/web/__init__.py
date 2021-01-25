@@ -13,10 +13,11 @@ app = Flask(__name__)
 
 def get_cursor():
     config = {
-        'user': 'root',
-        'password': 'root',
-        'host': 'db',
-        'port': '3306',
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASSWORD'),
+        'host': os.getenv('DB_HOST'),
+        'port': os.getenv('DB_PORT'),
+        'database': os.getenv('DB_DATABASE'),
         'database': 'web'
     }
     try:
@@ -39,17 +40,6 @@ def get_conn():
     except Error as e:
         print('Cannot connect to db', e)
         raise Exception('Not connected to db')
-
-
-@app.route('/')
-def index():
-    # Use os.getenv('key') to get environment variables
-    app_name = os.getenv('APP_NAME')
-
-    if app_name:
-        return f'Hello from {app_name} running in a Docker container behind Nginx'
-
-    return 'Hello from Flask'
 
 
 @app.route('/tasks')
