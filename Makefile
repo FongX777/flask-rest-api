@@ -5,7 +5,9 @@ dev_hot_reload:
 	watchmedo shell-command \                                                                                                    main     11:29
     --patterns="*.py" \
     --recursive \
-		--event-delay=500ms\
+		--timeout=2\
     --command='docker-compose stop flask && docker-compose up --build flask' \
     flask
-	nodemon --delay 80ms --exec 'docker-compose stop flask && docker-compose up --build flask' flask
+
+unit-tests:
+	docker-compose run --rm --no-deps --entrypoint=pytest flask /web/tests

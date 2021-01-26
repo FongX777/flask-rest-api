@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 
 def to_task_dto(task: Task):
+    print(task)
     return {"id": task.id, "name": task.name, "status": task.status.value}
 
 
@@ -16,7 +17,7 @@ def update_task(taskDAO, id: int, name: str, status: int):
     if task is None:
         return None
     task.update(name, TaskStatus(status))
-    updated_task = taskDAO.update_task(task.id, task.name, task.status.value)
+    updated_task = taskDAO.update_task(task.id, task.name, task.status)
     return to_task_dto(updated_task)
 
 
