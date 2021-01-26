@@ -1,38 +1,8 @@
-import mysql.connector
 from mysql.connector import Error
 from web.domain.task import Task, TaskStatus
 
 
-class AbstractTaskDAO:
-    __db = None
-    __counter = 1
-
-    def __init__(self):
-        self.__db = {}
-
-    def get(self, id) -> Task:
-        return self.__db[id]
-
-    def get_tasks(self):
-        return list(self.__db.values())
-
-    def add_task(self, name):
-        id = (self.__counter)
-        self.__db[id] = {"id": id, "name": name, "status": 0}
-        self.__counter += 1
-        return self.__db[id]
-
-    def update_task(self, id, name, status: TaskStatus):
-        self.__db[(id)]["name"] = name
-        self.__db[(id)]["status"] = status
-        return self.__db[id]
-
-    def delete_task(self, id):
-        if ((id) in self.__db):
-            self.__db.pop((id))
-
-
-class MySQLTaskDAO(AbstractTaskDAO):
+class MySQLTaskDAO():
     __conn = None
 
     def __init__(self, conn):
@@ -54,7 +24,7 @@ class MySQLTaskDAO(AbstractTaskDAO):
         cursor.execute("SELECT id, name, status FROM tasks;")
         tasks = []
         for (id, name, status) in cursor:
-            tasks.append({"id": id, "name": name, "status": status})
+            tasks.append(Task(id=id, name=name, status=TaskStatus(status)))
         cursor.close()
         return tasks
 

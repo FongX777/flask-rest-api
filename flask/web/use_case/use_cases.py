@@ -1,4 +1,5 @@
 from web.domain.task import Task, TaskStatus
+from typing import TYPE_CHECKING
 
 
 def to_task_dto(task: Task):
@@ -11,9 +12,19 @@ def create_task(taskDAO, name: str):
 
 
 def update_task(taskDAO, id: int, name: str, status: int):
-    task = taskDAO.get(id)  # type: Task
+    task = taskDAO.get(id)
     if task is None:
         return None
     task.update(name, TaskStatus(status))
     updated_task = taskDAO.update_task(task.id, task.name, task.status.value)
     return to_task_dto(updated_task)
+
+
+def delete_task(taskDAO, id: int):
+    taskDAO.delete_task(id)
+
+
+def list_tasks(taskDAO):
+    tasks = taskDAO.get_tasks()
+
+    return list(map(to_task_dto, tasks))
