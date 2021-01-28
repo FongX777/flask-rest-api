@@ -26,9 +26,9 @@ class FakeTaskDAO(MySQLTaskDAO):
         self.__counter += 1
         return self.__tasks[id]
 
-    def update_task(self, id, name, status):
-        self.__tasks[id] = Task(id=id, name=name, status=status)
-        return self.__tasks[id]
+    def update_task(self, task: Task):
+        self.__tasks[task.id] = task
+        return self.__tasks[task.id]
 
     def delete_task(self, id):
         self.__tasks.pop(id)
