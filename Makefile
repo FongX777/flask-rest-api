@@ -9,6 +9,6 @@ dev_hot_reload:
     --command='docker-compose stop flask && docker-compose up --build flask' \
     flask
 
-ci-unit-tests:
+unit-tests:
 	docker-compose build flask
 	docker-compose run --rm --no-deps --entrypoint="python3.7 -m pytest" flask tests

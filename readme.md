@@ -1,5 +1,21 @@
 # REST API App Excercise on Flask
 
+## Get Started
+
+Get the application running:
+
+```
+make dev
+```
+
+Run tests:
+
+```
+make unit-tests
+```
+
+---
+
 Implement a Restful task list API as well as run this application in container.
 
 - Spec
