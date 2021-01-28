@@ -5,7 +5,7 @@ RUN apt update && \
   add-apt-repository ppa:deadsnakes/ppa && \
   apt update -y && \
   apt-get install -y build-essential python3.7 python3.7-dev python3-pip python3.7-venv && \
-  RUN python3.7 -m pip install pip --upgrade && \
+  python3.7 -m pip install pip --upgrade && \
   python3.7 -m pip install wheel
 
 
