@@ -1,5 +1,13 @@
-# Use the Python3.7.2 image
-FROM python:3.7.2-stretch
+FROM ubuntu:18.04
+
+RUN apt update && \
+  apt install -y software-properties-common && \
+  add-apt-repository ppa:deadsnakes/ppa && \
+  apt update -y && \
+  apt-get install -y build-essential python3.7 python3.7-dev python3-pip python3.7-venv && \
+  RUN python3.7 -m pip install pip --upgrade && \
+  python3.7 -m pip install wheel
+
 
 # Set the working directory to /web
 WORKDIR /flask
