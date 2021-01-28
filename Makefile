@@ -11,4 +11,4 @@ dev_hot_reload:
 
 ci-unit-tests:
 	docker-compose build flask
-	docker-compose run --rm --no-deps --entrypoint="python -m pytest" flask tests
+	docker-compose run --rm --no-deps --entrypoint="python3.7 -m pytest" flask tests
